@@ -8,11 +8,10 @@ st.set_page_config(page_title="AI Email Writer", page_icon="📧")
 
 st.title("📧 AI Email / Letter Writer")
 
-# API Key Input
-api_key = st.text_input("Enter your OpenAI API Key", type="password")
+# Use secret API key
+client = OpenAI(api_key=st.secrets["OPENAI_API_KEY"])
 
 def generate_email(purpose, tone, recipient, sender, key_points):
-    client = OpenAI(api_key=api_key)
 
     prompt = f"""
     Write a complete professional email.
@@ -56,12 +55,9 @@ sender = st.text_input("Your Name")
 key_points = st.text_area("Key Points")
 
 if st.button("Generate Email"):
-    if api_key == "":
-        st.warning("Please enter API key.")
-    else:
-        email = generate_email(purpose, tone, recipient, sender, key_points)
-        st.text_area("Generated Email", email, height=300)
+    email = generate_email(purpose, tone, recipient, sender, key_points)
+    st.text_area("Generated Email", email, height=300)
 
-        pdf_file = save_as_pdf(email)
-        with open(pdf_file, "rb") as file:
-            st.download_button("Download PDF", file, file_name="Generated_Email.pdf")
+    pdf_file = save_as_pdf(email)
+    with open(pdf_file, "rb") as file:
+        st.download_button("Download PDF", file, file_name="Generated_Email.pdf")
